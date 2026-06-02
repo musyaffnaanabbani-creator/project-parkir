@@ -358,8 +358,141 @@ else:
                     del st.session_state.data_keluar
 
     # =================================================
-    # PENDAPATAN
+    # DAFTAR PARKIR
     # =================================================
+
+    elif menu == "Daftar Parkir":
+
+        st.subheader("📋 Daftar Kendaraan Parkir")
+
+        data = st.session_state.parkir.tampilkan()
+
+        if len(data) > 0:
+
+            df = pd.DataFrame(data)
+
+            st.dataframe(
+                df,
+                use_container_width=True
+            )
+
+            st.success(
+                f"Total Kendaraan Parkir : {len(data)}"
+            )
+
+        else:
+            st.warning(
+                "Belum Ada Kendaraan Yang Parkir"
+            )
+
+    # =================================================
+    # CARI KENDARAAN
+    # =================================================
+
+    elif menu == "Cari Kendaraan":
+
+        st.subheader("🔍 Cari Kendaraan")
+
+        plat_cari = st.text_input(
+            "Masukkan Plat Nomor"
+        )
+
+        if st.button("Cari Kendaraan"):
+
+            hasil = st.session_state.parkir.cari(
+                plat_cari
+            )
+
+            if hasil:
+
+                st.success(
+                    "Kendaraan Ditemukan"
+                )
+
+                st.write(
+                    f"Nomor Tiket : {hasil.tiket}"
+                )
+
+                st.write(
+                    f"Plat Nomor : {hasil.plat}"
+                )
+
+                st.write(
+                    f"Jenis Kendaraan : {hasil.jenis}"
+                )
+
+                st.write(
+                    f"Waktu Masuk : {hasil.waktu_masuk}"
+                )
+
+            else:
+
+                st.error(
+                    "Kendaraan Tidak Ditemukan"
+                )
+
+# =================================================
+# SORTING PLAT
+# =================================================
+
+    elif menu == "Sorting Plat":
+
+        st.subheader(
+            "🔤 Sorting Plat Nomor (A-Z)"
+        )
+
+        data = st.session_state.parkir.tampilkan()
+
+        if len(data) > 0:
+
+            data_sort = sorted(
+                data,
+                key=lambda x: x["Plat"]
+            )
+
+            st.dataframe(
+                pd.DataFrame(data_sort),
+                use_container_width=True
+            )
+
+        else:
+
+            st.warning(
+                "Belum Ada Data Parkir"
+            )
+
+# =================================================
+# RIWAYAT TRANSAKSI
+# =================================================
+
+    elif menu == "Riwayat Transaksi":
+
+        st.subheader("🧾 Riwayat Transaksi")
+
+        if len(st.session_state.riwayat) > 0:
+
+            df = pd.DataFrame(
+                st.session_state.riwayat
+            )
+
+            st.dataframe(
+                df,
+                use_container_width=True
+            )
+
+            st.success(
+                f"Total Transaksi : {len(df)}"
+            )
+
+        else:
+
+            st.warning(
+                "Belum Ada Riwayat Transaksi"
+            )
+
+# =================================================
+# PENDAPATAN
+# =================================================
 
     elif menu == "Pendapatan":
 
@@ -369,3 +502,18 @@ else:
             "Total Pendapatan",
             f"Rp {st.session_state.pendapatan:,}"
         )
+
+        if len(st.session_state.riwayat) > 0:
+
+            df = pd.DataFrame(
+                st.session_state.riwayat
+            )
+
+            st.dataframe(
+                df[[
+                    "Plat",
+                    "Metode",
+                    "Biaya"
+                ]],
+                use_container_width=True
+            )
